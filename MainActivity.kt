@@ -1,22 +1,37 @@
-class MainActivity : AppCompatActivity() {
+package com.example.unitconversion
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var imageAdapter: ImageAdapter
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = GridLayoutManager(this, 3) // 3 columns for grid view
+        val inputValue = findViewById<EditText>(R.id.input_value)
+        val fromUnit = findViewById<Spinner>(R.id.spinner_from_unit)
+        val toUnit = findViewById<Spinner>(R.id.spinner_to_unit)
+        val resultView = findViewById<TextView>(R.id.result)
+        val convertButton = findViewById<Button>(R.id.button_convert)
 
-        val imageList = fetchImagesFromDeviceOrOnline()
-        imageAdapter = ImageAdapter(imageList)
-        recyclerView.adapter = imageAdapter
-    }
-
-    private fun fetchImagesFromDeviceOrOnline(): List<String> {
-        // Retrieve image URLs from online source or from device storage
-        return listOf("url_or_path1", "url_or_path2", "url_or_path3") // Example placeholder
+        convertButton.setOnClickListener {
+            val value = inputValue.text.toString().toDouble()
+            val from = fromUnit.selectedItem.toString()
+            val to = toUnit.selectedItem.toString()
+            val result = when {
+                from == "Celsius" && to == "Fahrenheit" -> (value * 9 / 5) + 32
+                from == "Fahrenheit" && to == "Celsius" -> (value - 32) * 5 / 9
+                from == "Kilograms" && to == "Pounds" -> value * 2.205
+                from == "Pounds" && to == "Kilograms" -> value / 2.205
+                // Add more unit conversions as necessary
+                else -> 0.0
+            }
+            resultView.text = result.toString()
+        }
     }
 }
